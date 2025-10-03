@@ -119,6 +119,33 @@ def plot_distribution(
         unique += 1
     plt.savefig(os.path.join(output_dirname, unique_filename))
 
+def iid_partition_recsys(
+    train_dataset: data.Dataset,
+    num_clients: int,
+) -> List[data.Dataset]:
+    """
+    Partition a `torch.utils.data.Dataset` into `num_clients` clients chunks in an IID manner.
+    :param train_dataset: the training dataset
+    :param num_clients: number of clients
+    :return train_dataset_partitioned: a list of `torch.utils.data.Dataset` for each client
+    """
+    train_dataset_split_indices = np.array_split(range(len(train_dataset)), num_clients)
+    train_dataset_partitioned = []
+    for i in range(num_clients):
+        train_data_input = []
+        train_data_label = []
+        for idx in train_dataset_split_indices[i]:
+            train_data_input.append(train_dataset[idx][0].tolist())
+            train_data_label.append(train_dataset[idx][1])
+        train_data_label = torch.FloatTensor(train_data_label).unsqueeze(1)
+        train_dataset_partitioned.append(
+            Dataset(
+                torch.LongTensor(train_data_input),
+                train_data_label,
+            )
+        )
+    return train_dataset_partitioned
+
 
 def iid_partition(
     train_dataset: data.Dataset,

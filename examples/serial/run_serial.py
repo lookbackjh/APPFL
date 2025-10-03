@@ -20,7 +20,7 @@ args = argparser.parse_args()
 # Load server agent configurations and set the number of clients
 server_agent_config = OmegaConf.load(args.server_config)
 server_agent_config.server_configs.num_clients = args.num_clients
-
+print(server_agent_config.server_configs.device)
 # Create server agent
 server_agent = ServerAgent(server_agent_config=server_agent_config)
 
@@ -53,14 +53,14 @@ client_agents = [
 # Get additional client configurations from the server
 client_config_from_server = server_agent.get_client_configs()
 for client_agent in client_agents:
-    client_agent.load_config(client_config_from_server)
+    client_agent.load_config(client_config_from_server) # 이걸 설정해야 client 가 어떤 모델을 쓰는 지 알 수 있을 거고, 
 
 # Load initial global model from the server
-init_global_model = server_agent.get_parameters(serial_run=True)
+init_global_model = server_agent.get_parameters(serial_run=True) # 이걸 해줘야 서버랑 같은 파라미터로 시작할 수 있따. 
 for client_agent in client_agents:
     client_agent.load_parameters(init_global_model)
 
-# [Optional] Set number of local data to the server
+# [Optional] Set number of local data to the server  이건 각각의 데이터를 분리 데이터 분맂가업은 어디/
 for i in range(args.num_clients):
     sample_size = client_agents[i].get_sample_size()
     server_agent.set_sample_size(

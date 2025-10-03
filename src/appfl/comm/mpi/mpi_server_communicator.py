@@ -69,7 +69,7 @@ class MPIServerCommunicator:
                 tag = status.Get_tag()
                 count = status.Get_count(MPI.BYTE)
                 request_buffer = bytearray(count)
-                self.comm.Recv(request_buffer, source=source, tag=tag)
+                self.comm.Recv(request_buffer, source=source, tag=tag) # 이 방식에서는 굳이 irecv를 쓸 필요가 없을듯(별달리 하는 일이 없으니까)
                 request = byte_to_request(request_buffer)
 
                 # Memory optimization: Clean up request buffer immediately
@@ -82,7 +82,7 @@ class MPIServerCommunicator:
                 )
                 if response is not None:
                     response_bytes = response_to_byte(response)
-                    self.comm.Send(response_bytes, dest=source, tag=source)
+                    self.comm.Send(response_bytes, dest=source, tag=source) # 메시지가 클떄는 블로킹모드로 작용. 
 
                     # Memory optimization: Clean up after sending
                     if self.optimize_memory:
@@ -232,7 +232,7 @@ class MPIServerCommunicator:
         client_ids = meta_data.get("_client_ids", [client_rank])
         for client_id in client_ids:
             self._client_id_to_client_rank[client_id] = client_rank
-        if len(client_ids) > 1:
+        if len(client_ids) > 1: ##batched case
             assert (
                 self.server_agent.server_agent_config.server_configs.scheduler
                 == "SyncScheduler"
@@ -314,7 +314,7 @@ class MPIServerCommunicator:
                     meta_data=yaml.dump(meta_data),
                 )
             else:
-                self._update_global_model_futures[client_id] = global_model
+                self._update_global_model_futures[client_id] = global_model # global model은 future이기 떄문에. 
                 self._check_update_global_model_futures()
         return None
 

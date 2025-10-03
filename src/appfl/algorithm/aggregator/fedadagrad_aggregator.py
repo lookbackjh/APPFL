@@ -34,7 +34,7 @@ class FedAdagradAggregator(FedAvgAggregator):
         """
         Compute the changes to the global model after the aggregation.
         """
-        super().compute_steps(local_models)
+        super().compute_steps(local_models) #여기서 이미 step이 계산이 된 상태이다. 즉 각 client별로 global-local(update 후)의 DELTA가 계산이 된 상태이다. 
 
         # Memory optimization: Initialize vectors efficiently
         if len(self.m_vector) == 0:

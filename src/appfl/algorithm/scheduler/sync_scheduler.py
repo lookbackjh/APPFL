@@ -54,7 +54,7 @@ class SyncScheduler(BaseScheduler):
                 if key not in self.aggregation_kwargs:
                     self.aggregation_kwargs[key] = {}
                 self.aggregation_kwargs[key][client_id] = value
-            self.future[client_id] = future
+            self.future[client_id] = future #그니까하나만 도착했을 경우에는 도착한것만 체크하고 리턴. 
 
             if len(self.local_models) == self.num_clients:
                 # Memory optimization: Process aggregation with cleanup
@@ -92,7 +92,7 @@ class SyncScheduler(BaseScheduler):
                     self.local_models.clear()
 
                 self._num_global_epochs += 1
-            return future
+            return future ## 여기 리턴은 왜들어가지? set_result만 했으니까 번호표만 주고 나중에 result를 호출해서 될때 받으면 된느거지. 
 
     def get_num_global_epochs(self) -> int:
         """

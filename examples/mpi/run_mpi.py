@@ -47,7 +47,7 @@ else:
         comm, server_rank=0, client_id=client_agent_config.client_id
     )
     # Load the configurations and initial global model
-    client_config = client_communicator.get_configuration()
+    client_config = client_communicator.get_configuration()  ##  서버로부터 받아와야하는 것들은 client_communicator을 사용 
     client_agent.load_config(client_config)
     init_global_model = client_communicator.get_global_model(init_model=True)
     client_agent.load_parameters(init_global_model)
@@ -81,7 +81,7 @@ else:
         )
 
     # Local training and global model update iterations
-    while True:
+    while True:  # 받아올거 다받아오면  각 클라이언트마다  모델 실행.  
         client_agent.train()
         local_model = client_agent.get_parameters()
         if isinstance(local_model, tuple):

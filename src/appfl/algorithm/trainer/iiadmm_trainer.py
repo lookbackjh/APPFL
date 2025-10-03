@@ -79,7 +79,7 @@ class IIADMMTrainer(BaseTrainer):
         assert hasattr(self, "weight"), (
             "You must set the weight of the client before training. Use `set_weight` method."
         )
-        self.model.train()
+        self.model.train() # train 모드로 바꾸고
         self.model.to(self.train_configs.device)
         do_validation = (
             self.train_configs.get("do_validation", False)

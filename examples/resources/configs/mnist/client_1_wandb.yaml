@@ -27,6 +27,6 @@ comm_configs:
 
 wandb_configs:
   enable_wandb: True
-  entity: zl52-university-of-illinois-urbana-champaign
+  entity: jjjjunho1011-hanyang-university
   project: appfl
   exp_name: appfl-mnist

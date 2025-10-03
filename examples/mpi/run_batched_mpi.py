@@ -27,6 +27,10 @@ client_batch = [
     for array in np.array_split(np.arange(num_clients), size - 1)
 ]
 
+print(client_batch)
+
+# 총 100개에 클라이언트 10개라고 해보자 그러면 각각 10개의 클라이언트를 가진다. 
+
 if rank == 0:
     # Load and set the server configurations
     server_agent_config = OmegaConf.load(args.server_config)
@@ -59,12 +63,18 @@ else:
         client_agents.append(
             ClientAgent(client_agent_config=copy.deepcopy(client_agent_config))
         )
+
+    
+
+    # 이러면 총 몇개의 client agent가 생성되는거지? 총 100개의 클라이언트가 10개의 랭크로 나눠져서 각각 10개의 클라이언트를 가지게 된다.    
+    # 
     # Create the client communicator for batched clients
     client_communicator = MPIClientCommunicator(
         comm,
         server_rank=0,
         client_ids=[f"Client{client_id}" for client_id in client_batch[rank - 1]],
     )
+    # 근데 communicator은 하나고 엄밀히 말하면, 10개의 communicator가 다 전송해야 하는 거지. 
     # Get and load the general client configurations
     client_config = client_communicator.get_configuration()
     for client_agent in client_agents:
@@ -117,7 +127,7 @@ else:
                 client_metadata[client_id] = metadata
             client_local_models[client_id] = local_model
         new_global_model, metadata = client_communicator.update_global_model(
-            client_local_models, kwargs=client_metadata
+            client_local_models, kwargs=client_metadata # 그러니까 결국 100개의 클라이언트가 전부다 전송이되야 모델을 업데이트한다...
         )
         if all(metadata[client_id]["status"] == "DONE" for client_id in metadata):
             break

@@ -105,11 +105,11 @@ class ServerAgent:
                 local_model = self._bytes_to_model(local_model)
             global_model = self.scheduler.schedule(client_id, local_model, **kwargs)
 
-            # Memory optimization: Clean up local model after scheduling
+            # Memory optimizatio n: Clean up local model after scheduling
             if self.optimize_memory:
                 del local_model
                 gc.collect()
-            if not isinstance(global_model, Future):
+            if not isinstance(global_model, Future): ##asynchronous case
                 return global_model
             if blocking:
                 return global_model.result()  # blocking until the `Future` is done
